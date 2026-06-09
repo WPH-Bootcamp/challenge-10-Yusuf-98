@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+@theme {
+
+  /* ── Primary color ────────────────────── */
+  --color-primary:       #C12116;
+  --color-primary-hover: #a61e14;
+  --color-primary-light: #fef2f2;
+
+  /* ── Neutral scale ────────────────────── */
+  --color-neutral-25:  #FDFDFD;
+  --color-neutral-50:  #FAFAFA;
+  --color-neutral-100: #F5F5F5;
+  --color-neutral-200: #E9EAEB;
+  --color-neutral-300: #D5D7DA;
+  --color-neutral-400: #A4A7AE;
+  --color-neutral-500: #717680;
+  --color-neutral-600: #535862;
+  --color-neutral-700: #414651;
+  --color-neutral-800: #252837;
+  --color-neutral-900: #1B1D27;
+  --color-neutral-950: #0A0D12;
+
+  /* ── Accent ───────────────────────────── */
+  --color-accent-red:    #D9206E;
+  --color-accent-green:  #079455;
+  --color-accent-yellow: #FDB022;
+
+  /* ── Base ─────────────────────────────── */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* ── Semantic aliases ─────────────────── */
+  --color-bg:           #FFFFFF;
+  --color-surface:      #FAFAFA;   /* neutral-50 */
+  --color-border:       #E9EAEB;   /* neutral-200 */
+  --color-text-primary: #1B1D27;   /* neutral-900 */
+  --color-text-secondary: #535862; /* neutral-600 */
+  --color-text-muted:   #A4A7AE;   /* neutral-400 */
+  --color-star:         #FDB022;   /* accent-yellow */
+  --color-success:      #079455;   /* accent-green */
+  --color-error:        #D9206E;   /* accent-red */
+
+  /* ── Border radius ──── */
+  --radius-none:  0px;
+  --radius-xxs:   2px;
+  --radius-xs:    4px;
+  --radius-sm:    6px;
+  --radius-md:    8px;
+  --radius-lg:    10px;
+  --radius-xl:    12px;
+  --radius-2xl:   16px;
+  --radius-3xl:   20px;
+  --radius-4xl:   24px;
+  --radius-full:  9999px;
+
+  /* ── Spacing ── */
+  --spacing-none: 0px;
+  --spacing-xxs:  2px;
+  --spacing-xs:   4px;
+  --spacing-sm:   6px;
+  --spacing-md:   8px;
+  --spacing-lg:   12px;
+  --spacing-xl:   16px;
+  --spacing-2xl:  20px;
+  --spacing-3xl:  24px;
+  --spacing-4xl:  32px;
+  --spacing-5xl:  40px;
+  --spacing-6xl:  48px;
+  --spacing-7xl:  64px;
+  --spacing-8xl:  80px;
+  --spacing-9xl:  96px;
+  --spacing-10xl: 128px;
+  --spacing-11xl: 140px;
+
+  /* ── Typography scale ── */
+     Font: Nunito
+     Display 3xl : 60px / lh 72px  / ls -2%
+     Display 2xl : 48px / lh 60px  / ls -2%
+     Display xl  : 40px / lh 48px  / ls -2%
+     Display lg  : 36px / lh 44px  / ls -2%
+     Display md  : 32px / lh 40px  / ls -2%
+     Display sm  : 28px / lh 38px
+     Display xs  : 24px / lh 36px
+     Text xl     : 20px / lh 34px
+     Text lg     : 18px / lh 32px
+     Text md     : 16px / lh 30px
+     Text sm     : 14px / lh 28px
+     Text xs     : 12px / lh 24px
+     Weights: 400 Regular | 500 Medium | 600 Semibold | 700 Bold | 800 Extrabold
+  ─────────────────────────────────────────── */
+  --text-display-3xl:       60px;  
+  --text-display-3xl--lh:   72px;    
+  --text-display-2xl:       48px;      
+  --text-display-2xl--lh:   60px;  
+  --text-display-xl:        40px;   
+  --text-display-xl--lh:    48px;  
+  --text-display-lg:        36px;  
+  --text-display-lg--lh:    44px;  
+  --text-display-md:        32px;   
+  --text-display-md--lh:    40px;  
+  --text-display-sm:        28px;  
+  --text-display-sm--lh:    38px; 
+  --text-display-xs:        24px;   
+  --text-display-xs--lh:    36px;  
+  --text-xl:                20px;  
+  --text-xl--lh:            34px; 
+  --text-lg:                18px; 
+  --text-lg--lh:            32px;    
+  --text-md:                16px;   
+  --text-md--lh:            30px; 
+  --text-sm:                14px; 
+  --text-sm--lh:            28px; 
+  --text-xs:                12px; 
+  --text-xs--lh:            24px; 
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ── Google Fonts: Nunito ──────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+/* ── Base reset ────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Focus visible ─────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar ─────────────────────────────── */
+::-webkit-scrollbar          { width: 6px; height: 6px; }
+::-webkit-scrollbar-track    { background: var(--color-neutral-100); }
+::-webkit-scrollbar-thumb    { background: var(--color-neutral-300); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-neutral-400); }
+
+/* ── Typography helpers ────────────────────── */
+.text-display-3xl { font-size: var(--text-display-3xl); line-height: var(--text-display-3xl--lh); letter-spacing: -0.02em; }
+.text-display-2xl { font-size: var(--text-display-2xl); line-height: var(--text-display-2xl--lh); letter-spacing: -0.02em; }
+.text-display-xl  { font-size: var(--text-display-xl);  line-height: var(--text-display-xl--lh);  letter-spacing: -0.02em; }
+.text-display-lg  { font-size: var(--text-display-lg);  line-height: var(--text-display-lg--lh);  letter-spacing: -0.02em; }
+.text-display-md  { font-size: var(--text-display-md);  line-height: var(--text-display-md--lh);  letter-spacing: -0.02em; }
+.text-display-sm  { font-size: var(--text-display-sm);  line-height: var(--text-display-sm--lh); }
+.text-display-xs  { font-size: var(--text-display-xs);  line-height: var(--text-display-xs--lh); }
+.text-xl  { font-size: var(--text-xl);  line-height: var(--text-xl--lh); }
+.text-lg  { font-size: var(--text-lg);  line-height: var(--text-lg--lh); }
+.text-md  { font-size: var(--text-md);  line-height: var(--text-md--lh); }
+.text-sm  { font-size: var(--text-sm);  line-height: var(--text-sm--lh); }
+.text-xs  { font-size: var(--text-xs);  line-height: var(--text-xs--lh); }
+
+/* ── Line clamp ────────────────────────────── */
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.line-clamp-3 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+
+/* ── Shimmer loading ───────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position:  1000px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Fade in up ────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fadeInUp 0.35s ease-out forwards; }
+
+/* ── Reduced motion ────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
