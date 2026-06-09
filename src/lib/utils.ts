@@ -1,0 +1,50 @@
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function formatDate(dateString: string): string {
+  return new Intl.DateTimeFormat('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(dateString));
+}
+
+export function formatDistance(km: number): string {
+  if (km < 1) return `${(km * 1000).toFixed(0)} m`;
+  return `${km.toFixed(1)} km`;
+}
+
+export function getStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    preparing: 'Preparing',
+    on_the_way: 'On the Way',
+    delivered: 'Delivered',
+    done: 'Done',
+    canceled: 'Canceled',
+  };
+  return labels[status] ?? status;
+}
+
+export function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
