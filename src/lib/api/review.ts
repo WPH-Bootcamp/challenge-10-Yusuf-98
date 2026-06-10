@@ -2,40 +2,26 @@ import apiClient from './axios';
 import type { Review, ReviewPayload } from '@/types';
 
 export async function createReview(payload: ReviewPayload): Promise<Review> {
-  const { data } = await apiClient.post<{ data: Review } | Review>(
-    '/api/review',
-    payload
-  );
+  const { data } = await apiClient.post('/api/review', payload);
   return (data as { data: Review }).data ?? (data as Review);
 }
 
 export async function getMyReviews(): Promise<Review[]> {
-  const { data } = await apiClient.get<{ data: Review[] } | Review[]>(
-    '/api/review/my-reviews'
-  );
-  return (data as { data: Review[] }).data ?? (data as Review[]);
+  const { data } = await apiClient.get('/api/review/my-reviews');
+  if (Array.isArray(data)) return data as Review[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d.data)) return d.data as Review[];
+  return [];
 }
 
 export async function getRestaurantReviews(
   restaurantId: string
 ): Promise<Review[]> {
-  const { data } = await apiClient.get<{ data: Review[] } | Review[]>(
+  const { data } = await apiClient.get(
     `/api/review/restaurant/${restaurantId}`
   );
-  return (data as { data: Review[] }).data ?? (data as Review[]);
-}
-
-export async function updateReview(
-  id: string,
-  payload: Partial<ReviewPayload>
-): Promise<Review> {
-  const { data } = await apiClient.put<{ data: Review } | Review>(
-    `/api/review/${id}`,
-    payload
-  );
-  return (data as { data: Review }).data ?? (data as Review);
-}
-
-export async function deleteReview(id: string): Promise<void> {
-  await apiClient.delete(`/api/review/${id}`);
+  if (Array.isArray(data)) return data as Review[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d.data)) return d.data as Review[];
+  return [];
 }

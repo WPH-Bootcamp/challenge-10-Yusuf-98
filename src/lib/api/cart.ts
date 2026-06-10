@@ -2,10 +2,11 @@ import apiClient from './axios';
 import type { CartGroup } from '@/types';
 
 export async function getCart(): Promise<CartGroup[]> {
-  const { data } = await apiClient.get<{ data: CartGroup[] } | CartGroup[]>(
-    '/api/cart'
-  );
-  return (data as { data: CartGroup[] }).data ?? (data as CartGroup[]);
+  const { data } = await apiClient.get('/api/cart');
+  if (Array.isArray(data)) return data as CartGroup[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d.data)) return d.data as CartGroup[];
+  return [];
 }
 
 export async function addToCart(payload: {

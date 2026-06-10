@@ -4,25 +4,26 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
+  'inline-flex items-center justify-center whitespace-nowrap transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer',
   {
     variants: {
       variant: {
         default:
-          'bg-[#C12116] text-white hover:bg-[#a61e14] focus-visible:ring-[#C12116] active:scale-[0.98]',
+          'bg-primary-100 rounded-full text-md -tracking-2 font-bold text-neutral-25 hover:bg-primary-hover focus-visible:ring-primary-100 active:scale-101',
         outline:
-          'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:ring-gray-400',
+          'bg-white shadow-[0px_0px_20px_rgba(203,202,202,0.25)] rounded-xl text-neutral-950 -tracking-2 hover:bg-gray-50 focus-visible:ring-gray-400',
         ghost:
-          'bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400',
+          'bg-transparent text-neutral-600 md:-tracking-3 hover:bg-gray-100 focus-visible:ring-gray-400',
         secondary:
           'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-400',
         destructive:
           'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
-        link: 'text-[#C12116] underline-offset-4 hover:underline p-0 h-auto rounded-none',
+        link: 'text-primary-100 underline-offset-4 hover:underline p-0 h-auto rounded-none',
       },
       size: {
-        sm: 'h-8 px-3 text-xs',
-        default: 'h-10 px-6 py-2',
+        sm: 'h-9 md:h-10 py-2 px-3 gap-2 text-sm md:text-md',
+        md: 'h-10 py-2 px-3 gap-2 text-sm md:text-md',
+        default: 'h-12 px-2 py-2 gap-2',
         lg: 'h-12 px-8 text-base',
         xl: 'h-14 px-10 text-base',
         icon: 'h-9 w-9 p-0',

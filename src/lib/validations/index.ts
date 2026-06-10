@@ -17,28 +17,25 @@ export const registerSchema = z
     password: z
       .string()
       .min(8, 'Password minimal 8 karakter')
-      .regex(/[A-Z]/, 'Password harus mengandung huruf kapital')
-      .regex(/[0-9]/, 'Password harus mengandung angka'),
+      .regex(/[A-Z]/, 'Harus mengandung huruf kapital')
+      .regex(/[0-9]/, 'Harus mengandung angka'),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((d) => d.password === d.confirmPassword, {
     message: 'Konfirmasi password tidak cocok',
     path: ['confirmPassword'],
   });
 
 export const checkoutSchema = z.object({
-  deliveryAddress: z.string().min(10, 'Alamat pengiriman minimal 10 karakter'),
+  deliveryAddress: z.string().min(10, 'Alamat minimal 10 karakter'),
   phone: z.string().optional(),
   paymentMethod: z.string().min(1, 'Pilih metode pembayaran'),
   notes: z.string().optional(),
 });
 
 export const reviewSchema = z.object({
-  star: z.number().min(1, 'Beri rating minimal 1 bintang').max(5),
-  comment: z
-    .string()
-    .min(10, 'Komentar minimal 10 karakter')
-    .max(500, 'Komentar maksimal 500 karakter'),
+  star: z.number().min(1).max(5),
+  comment: z.string().min(10, 'Komentar minimal 10 karakter'),
 });
 
 export const updateProfileSchema = z.object({

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     template: '%s | Foody',
   },
   description:
-    'Search and refine your choice to discover the perfect restaurant. Order food online from your favourite restaurants.',
+    'Search and refine your choice to discover the perfect restaurant.',
   keywords: ['food', 'restaurant', 'order', 'delivery'],
 };
 
@@ -21,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang='id' suppressHydrationWarning>
       <head>
-        {/* Nunito — Figma design system font */}
         <link rel='preconnect' href='https://fonts.googleapis.com' />
         <link
           rel='preconnect'

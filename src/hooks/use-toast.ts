@@ -12,46 +12,36 @@ interface ToastState {
   open: boolean;
 }
 
-type Toast = Omit<ToastState, 'id' | 'open'>;
+type ToastInput = Omit<ToastState, 'id' | 'open'>;
 
-let toastCount = 0;
-
+let count = 0;
 type Listener = (toasts: ToastState[]) => void;
 const listeners: Listener[] = [];
-let memoryToasts: ToastState[] = [];
+let memToasts: ToastState[] = [];
 
 function dispatch(state: ToastState[]) {
-  memoryToasts = state;
+  memToasts = state;
   listeners.forEach((l) => l(state));
 }
 
-export function toast({ title, description, variant = 'default' }: Toast) {
-  const id = String(++toastCount);
-  dispatch([...memoryToasts, { id, title, description, variant, open: true }]);
+export function toast(input: ToastInput) {
+  const id = String(++count);
+  dispatch([...memToasts, { ...input, id, open: true }]);
   setTimeout(() => {
-    dispatch(
-      memoryToasts.map((t) => (t.id === id ? { ...t, open: false } : t))
-    );
+    dispatch(memToasts.map((t) => (t.id === id ? { ...t, open: false } : t)));
   }, 3500);
 }
 
 export function useToast() {
-  const [toasts, setToasts] = React.useState<ToastState[]>(memoryToasts);
+  const [toasts, setToasts] = React.useState<ToastState[]>(memToasts);
 
   React.useEffect(() => {
     listeners.push(setToasts);
     return () => {
-      const idx = listeners.indexOf(setToasts);
-      if (idx > -1) listeners.splice(idx, 1);
+      const i = listeners.indexOf(setToasts);
+      if (i > -1) listeners.splice(i, 1);
     };
   }, []);
 
-  return {
-    toasts,
-    toast,
-    dismiss: (id: string) =>
-      dispatch(
-        memoryToasts.map((t) => (t.id === id ? { ...t, open: false } : t))
-      ),
-  };
+  return { toasts, toast };
 }

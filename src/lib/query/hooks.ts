@@ -1,9 +1,4 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  UseQueryOptions,
-} from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as restoApi from '@/lib/api/resto';
 import * as cartApi from '@/lib/api/cart';
 import * as orderApi from '@/lib/api/order';
@@ -16,7 +11,6 @@ import type {
   CheckoutPayload,
 } from '@/types';
 
-// ── Query Keys ──────────────────────────────────────────────────────────────
 export const queryKeys = {
   restaurants: (params?: RestaurantFilter) => ['restaurants', params] as const,
   restaurantDetail: (id: string) => ['restaurant', id] as const,
@@ -32,7 +26,7 @@ export const queryKeys = {
   profile: () => ['profile'] as const,
 } as const;
 
-// ── Restaurant Hooks ─────────────────────────────────────────────────────────
+// ── Restaurants ───────────────────────────────────────────────────────────────
 export function useRestaurants(params?: RestaurantFilter) {
   return useQuery({
     queryKey: queryKeys.restaurants(params),
@@ -41,17 +35,13 @@ export function useRestaurants(params?: RestaurantFilter) {
   });
 }
 
-export function useRestaurantDetail(
-  id: string,
-  options?: Partial<UseQueryOptions>
-) {
+export function useRestaurantDetail(id: string) {
   return useQuery({
     queryKey: queryKeys.restaurantDetail(id),
     queryFn: () =>
       restoApi.getRestaurantById(id, { limitMenu: 20, limitReview: 10 }),
     enabled: !!id,
     staleTime: 1000 * 60 * 3,
-    ...(options as object),
   });
 }
 
@@ -90,7 +80,7 @@ export function useNearby(params?: { range?: number; limit?: number }) {
   });
 }
 
-// ── Cart Hooks ────────────────────────────────────────────────────────────────
+// ── Cart ──────────────────────────────────────────────────────────────────────
 export function useCart() {
   return useQuery({
     queryKey: queryKeys.cart(),
@@ -132,7 +122,7 @@ export function useClearCart() {
   });
 }
 
-// ── Order Hooks ───────────────────────────────────────────────────────────────
+// ── Orders ────────────────────────────────────────────────────────────────────
 export function useMyOrders(params?: {
   status?: OrderStatus;
   page?: number;
@@ -156,7 +146,7 @@ export function useCheckout() {
   });
 }
 
-// ── Review Hooks ──────────────────────────────────────────────────────────────
+// ── Reviews ───────────────────────────────────────────────────────────────────
 export function useCreateReview() {
   const qc = useQueryClient();
   return useMutation({
@@ -175,7 +165,7 @@ export function useMyReviews() {
   });
 }
 
-// ── Profile Hooks ─────────────────────────────────────────────────────────────
+// ── Profile ───────────────────────────────────────────────────────────────────
 export function useProfile() {
   return useQuery({
     queryKey: queryKeys.profile(),

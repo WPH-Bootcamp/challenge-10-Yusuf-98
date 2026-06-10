@@ -16,11 +16,7 @@ export function StarRating({
   readonly = false,
   size = 'md',
 }: StarRatingProps) {
-  const sizeMap = {
-    sm: 'h-4 w-4',
-    md: 'h-6 w-6',
-    lg: 'h-8 w-8',
-  };
+  const sizeMap = { sm: 'h-4 w-4', md: 'h-5 w-5', lg: 'h-7 w-7' };
 
   return (
     <div className='flex items-center gap-1'>
@@ -32,17 +28,17 @@ export function StarRating({
           disabled={readonly}
           className={cn(
             'transition-transform',
-            !readonly && 'hover:scale-110 cursor-pointer',
+            !readonly && 'cursor-pointer hover:scale-110',
             readonly && 'cursor-default'
           )}
-          aria-label={`${star} star${star > 1 ? 's' : ''}`}
+          aria-label={`${star} star`}
         >
           <Star
             className={cn(
               sizeMap[size],
               star <= value
-                ? 'fill-amber-400 text-amber-400'
-                : 'fill-gray-200 text-gray-200'
+                ? 'fill-star text-star'
+                : 'fill-neutral-200 text-neutral-200'
             )}
           />
         </button>

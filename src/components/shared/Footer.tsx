@@ -58,76 +58,74 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className='bg-[#0A0D12] text-[#D5D7DA]'>
+    <footer className='bg-neutral-950 text-neutral-300'>
       <div className='mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8'>
         <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3'>
           {/* Brand */}
-          <div className='lg:col-span-1'>
+          <div>
             <Link href='/' className='mb-3 flex items-center gap-2'>
               <span className='text-2xl'>✳️</span>
-              <span className='text-lg font-bold text-white'>Foody</span>
+              <span className='text-lg font-extrabold text-white'>Foody</span>
             </Link>
-            <p className='mb-6 max-w-xs text-sm leading-relaxed text-[#A4A7AE]'>
+            <p className='mb-6 max-w-xs text-sm leading-relaxed text-neutral-400'>
               Enjoy homemade flavors &amp; chef&apos;s signature dishes, freshly
               prepared every day. Order online or visit our nearest branch.
             </p>
-            <div>
-              <p className='mb-3 text-sm font-semibold text-white'>
-                Follow on Social Media
-              </p>
-              <div className='flex items-center gap-3'>
-                {socialLinks.map((s) => (
-                  <a
-                    key={s.name}
-                    href={s.href}
-                    aria-label={s.name}
-                    className='flex h-9 w-9 items-center justify-center rounded-full bg-[#252837] text-[#D5D7DA] transition-colors hover:bg-[#C12116] hover:text-white'
-                  >
-                    {s.icon}
-                  </a>
-                ))}
-              </div>
+            <p className='mb-3 text-sm font-semibold text-white'>
+              Follow on Social Media
+            </p>
+            <div className='flex items-center gap-3'>
+              {socialLinks.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  aria-label={s.name}
+                  className='flex h-9 w-9 items-center justify-center rounded-full bg-neutral-800 text-neutral-300 transition-colors hover:bg-primary-100 hover:text-white'
+                >
+                  {s.icon}
+                </a>
+              ))}
             </div>
           </div>
-
-          {/* Explore */}
-          <div>
-            <h3 className='mb-4 text-sm font-semibold text-white'>Explore</h3>
-            <ul className='space-y-2'>
-              {exploreLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className='text-sm text-[#A4A7AE] transition-colors hover:text-white'
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Help */}
-          <div>
-            <h3 className='mb-4 text-sm font-semibold text-white'>Help</h3>
-            <ul className='space-y-2'>
-              {helpLinks.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className='text-sm text-[#A4A7AE] transition-colors hover:text-white'
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        <div className='mt-10 border-t border-[#1B1D27] pt-6 text-center text-xs text-[#717680]'>
-          © {new Date().getFullYear()} Foody. All rights reserved.
+        {/* Explore */}
+        <div>
+          <h3 className='mb-4 text-sm font-semibold text-white'>Explore</h3>
+          <ul className='space-y-2'>
+            {exploreLinks.map((l) => (
+              <li key={l.label}>
+                <Link
+                  href={l.href}
+                  className='text-sm text-neutral-400 transition-colors hover:text-white'
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        {/* Help */}
+        <div>
+          <h3 className='mb-4 text-sm font-semibold text-white'>Help</h3>
+          <ul className='space-y-2'>
+            {helpLinks.map((l) => (
+              <li key={l.label}>
+                <Link
+                  href={l.href}
+                  className='text-sm text-neutral-400 transition-colors hover:text-white'
+                >
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className='mt-10 border-t border-neutral-800 pt-6 text-center text-xs text-neutral-500'>
+        © {new Date().getFullYear()} Foody. All rights reserved.
       </div>
     </footer>
   );

@@ -40,11 +40,17 @@ export function getStatusLabel(status: string): string {
   return labels[status] ?? status;
 }
 
-export function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
+export function toRestaurantArray(
+  data: unknown
+): import('./api/resto').Restaurant[] {
+  if (!data) return [];
+  if (Array.isArray(data)) return data as import('./api/resto').Restaurant[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d.data))
+    return d.data as import('./api/resto').Restaurant[];
+  if (Array.isArray(d.restaurants))
+    return d.restaurants as import('./api/resto').Restaurant[];
+  if (Array.isArray(d.items))
+    return d.items as import('./api/resto').Restaurant[];
+  return [];
 }

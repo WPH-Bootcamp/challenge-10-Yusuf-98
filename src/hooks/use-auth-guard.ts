@@ -5,27 +5,14 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 
 export function useRequireAuth(redirectTo = '/login') {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (_hasHydrated && !isAuthenticated) {
       router.replace(redirectTo);
     }
-  }, [isAuthenticated, router, redirectTo]);
+  }, [_hasHydrated, isAuthenticated, router, redirectTo]);
 
-  return { isAuthenticated };
-}
-
-export function useRedirectIfAuth(redirectTo = '/') {
-  const { isAuthenticated } = useAuthStore();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.replace(redirectTo);
-    }
-  }, [isAuthenticated, router, redirectTo]);
-
-  return { isAuthenticated };
+  return { isAuthenticated, hasHydrated: _hasHydrated };
 }

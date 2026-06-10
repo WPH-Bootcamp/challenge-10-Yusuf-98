@@ -1,4 +1,4 @@
-// Auth Types
+// ── Auth ─────────────────────────────────────────────────────────────────────
 export interface User {
   id: string;
   name: string;
@@ -9,8 +9,15 @@ export interface User {
 }
 
 export interface AuthResponse {
-  token: string;
-  user: User;
+  success?: boolean;
+  message?: string;
+  token?: string;
+  access_token?: string;
+  user?: User;
+  data?: {
+    token?: string;
+    user?: User;
+  };
 }
 
 export interface LoginPayload {
@@ -25,7 +32,7 @@ export interface RegisterPayload {
   password: string;
 }
 
-// Restaurant Types
+// ── Restaurant ───────────────────────────────────────────────────────────────
 export interface Restaurant {
   id: string;
   name: string;
@@ -68,7 +75,19 @@ export interface RestaurantDetail extends Restaurant {
   reviews: Review[];
 }
 
-// Cart Types
+// ── Filter ───────────────────────────────────────────────────────────────────
+export interface RestaurantFilter {
+  location?: string;
+  range?: number;
+  priceMin?: number;
+  priceMax?: number;
+  rating?: number;
+  category?: string;
+  page?: number;
+  limit?: number;
+}
+
+// ── Cart ─────────────────────────────────────────────────────────────────────
 export interface CartItem {
   id: string;
   menuId: string;
@@ -84,7 +103,7 @@ export interface CartGroup {
   total: number;
 }
 
-// Order Types
+// ── Order ────────────────────────────────────────────────────────────────────
 export type OrderStatus =
   | 'preparing'
   | 'on_the_way'
@@ -123,41 +142,7 @@ export interface CheckoutPayload {
   notes?: string;
 }
 
-export interface PaymentSummary {
-  subtotal: number;
-  deliveryFee: number;
-  serviceFee: number;
-  total: number;
-}
-
-// Filter Types
-export interface RestaurantFilter {
-  location?: string;
-  range?: number;
-  priceMin?: number;
-  priceMax?: number;
-  rating?: number;
-  category?: string;
-  page?: number;
-  limit?: number;
-}
-
-// API Response Types
-export interface ApiResponse<T> {
-  data: T;
-  message?: string;
-  success?: boolean;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
-// Review Payload
+// ── Review ───────────────────────────────────────────────────────────────────
 export interface ReviewPayload {
   transactionId: string;
   restaurantId: string;

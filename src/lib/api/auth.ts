@@ -25,16 +25,13 @@ export async function register(
 }
 
 export async function getProfile(): Promise<User> {
-  const { data } = await apiClient.get<{ data: User }>('/api/auth/profile');
-  return data.data ?? (data as unknown as User);
+  const { data } = await apiClient.get('/api/auth/profile');
+  return (data as { data: User }).data ?? (data as User);
 }
 
 export async function updateProfile(
   payload: Partial<Pick<User, 'name' | 'phone'>>
 ): Promise<User> {
-  const { data } = await apiClient.put<{ data: User }>(
-    '/api/auth/profile',
-    payload
-  );
-  return data.data ?? (data as unknown as User);
+  const { data } = await apiClient.get('/api/auth/profile');
+  return (data as { data: User }).data ?? (data as User);
 }
