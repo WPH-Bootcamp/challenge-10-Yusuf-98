@@ -27,7 +27,7 @@ export default function OrdersPage() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const qc = useQueryClient();
-  const [activeStatus, setActiveStatus] = useState<OrderStatus>('done');
+  const [activeStatus, setActiveStatus] = useState<OrderStatus>('preparing');
   const [search, setSearch] = useState('');
   const [reviewOrder, setReviewOrder] = useState<Order | null>(null);
   const [reviewStar, setReviewStar] = useState(0);
@@ -35,9 +35,12 @@ export default function OrdersPage() {
   const createReview = useCreateReview();
 
   const { data: orders, isLoading } = useMyOrders({ status: activeStatus });
+
   const filtered = search
     ? (orders ?? []).filter((o) =>
-        o.restaurant?.name?.toLowerCase().includes(search.toLowerCase())
+        o.restaurants?.some((r) =>
+          r.restaurant?.name?.toLowerCase().includes(search.toLowerCase())
+        )
       )
     : (orders ?? []);
 
@@ -61,9 +64,10 @@ export default function OrdersPage() {
       return;
     }
     try {
+      const firstRestaurant = reviewOrder.restaurants?.[0];
       await createReview.mutateAsync({
-        transactionId: reviewOrder.transactionId ?? reviewOrder.id,
-        restaurantId: reviewOrder.restaurantId ?? reviewOrder.restaurant?.id,
+        transactionId: String(reviewOrder.transactionId ?? reviewOrder.id),
+        restaurantId: Number(firstRestaurant?.restaurant?.id ?? 0),
         star: reviewStar,
         comment: reviewComment,
       });
@@ -71,8 +75,15 @@ export default function OrdersPage() {
       setReviewOrder(null);
       setReviewStar(0);
       setReviewComment('');
-    } catch {
-      toast({ title: 'Failed to submit review', variant: 'error' });
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? 'Failed to submit review';
+      toast({
+        title: 'Failed to submit review',
+        description: msg,
+        variant: 'error',
+      });
     }
   }
 
@@ -145,7 +156,7 @@ export default function OrdersPage() {
               <Search className='absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400' />
               <input
                 type='search'
-                placeholder='Search'
+                placeholder='Search restaurant'
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className='w-full rounded-full border border-neutral-200 bg-white py-2.5 pl-11 pr-4 text-sm shadow-sm focus:border-primary-100 focus:outline-none focus:ring-1 focus:ring-primary-100/15'
@@ -197,43 +208,53 @@ export default function OrdersPage() {
                 <div className='divide-y divide-neutral-100'>
                   {filtered.map((order) => (
                     <div key={order.id} className='p-5'>
-                      <div className='mb-3 flex items-center gap-2'>
-                        <span className='text-lg'>🛍️</span>
-                        <span className='font-bold text-neutral-900'>
-                          {order.restaurant?.name}
-                        </span>
-                      </div>
-                      {order.items?.slice(0, 2).map((item) => (
-                        <div
-                          key={item.menuId}
-                          className='mb-3 flex items-center gap-3'
-                        >
-                          <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100'>
-                            <Image
-                              src={item.menu?.image ?? placeholder}
-                              alt={item.menu?.name ?? 'Food'}
-                              fill
-                              className='object-cover'
-                              unoptimized
-                            />
+                      {/* Restaurants in this order */}
+                      {order.restaurants?.map((group, gi) => (
+                        <div key={gi} className='mb-4'>
+                          <div className='mb-3 flex items-center gap-2'>
+                            <span className='text-lg'>🛍️</span>
+                            <span className='font-bold text-neutral-900'>
+                              {group.restaurant?.name}
+                            </span>
                           </div>
-                          <div>
-                            <p className='text-sm font-semibold text-neutral-900'>
-                              {item.menu?.name}
-                            </p>
-                            <p className='text-sm text-neutral-500'>
-                              {item.quantity} x{' '}
-                              {formatCurrency(item.menu?.price ?? 0)}
-                            </p>
-                          </div>
+                          {group.items?.slice(0, 2).map((item, ii) => (
+                            <div
+                              key={ii}
+                              className='mb-3 flex items-center gap-3'
+                            >
+                              <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100'>
+                                <Image
+                                  src={item.image ?? placeholder}
+                                  alt={item.menuName ?? 'Food'}
+                                  fill
+                                  sizes='56px'
+                                  className='object-cover'
+                                  unoptimized
+                                />
+                              </div>
+                              <div>
+                                <p className='text-sm font-semibold text-neutral-900'>
+                                  {item.menuName}
+                                </p>
+                                <p className='text-sm text-neutral-500'>
+                                  {item.quantity} x{' '}
+                                  {formatCurrency(item.price ?? 0)}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       ))}
+
                       <hr className='my-3 border-dashed border-neutral-200' />
+
                       <div className='flex items-center justify-between'>
                         <div>
                           <p className='text-xs text-neutral-500'>Total</p>
                           <p className='text-lg font-extrabold text-neutral-900'>
-                            {formatCurrency(order.total)}
+                            {formatCurrency(
+                              order.pricing?.totalPrice ?? order.total ?? 0
+                            )}
                           </p>
                         </div>
                         {activeStatus === 'done' && (

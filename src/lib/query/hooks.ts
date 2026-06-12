@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/auth.store';
 import * as restoApi from '@/lib/api/resto';
 import * as cartApi from '@/lib/api/cart';
 import * as orderApi from '@/lib/api/order';
@@ -82,10 +83,12 @@ export function useNearby(params?: { range?: number; limit?: number }) {
 
 // ── Cart ──────────────────────────────────────────────────────────────────────
 export function useCart() {
+  const { isAuthenticated } = useAuthStore();
   return useQuery({
     queryKey: queryKeys.cart(),
     queryFn: cartApi.getCart,
     staleTime: 0,
+    enabled: isAuthenticated,
   });
 }
 

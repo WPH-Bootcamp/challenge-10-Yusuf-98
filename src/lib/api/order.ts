@@ -11,9 +11,21 @@ export async function getMyOrders(params?: {
   page?: number;
   limit?: number;
 }): Promise<Order[]> {
-  const { data } = await apiClient.get('/api/order/my-order', { params });
+  const cleanParams: Record<string, unknown> = {};
+  if (params?.status) cleanParams.status = params.status;
+  if (params?.page) cleanParams.page = params.page;
+  if (params?.limit) cleanParams.limit = params.limit;
+
+  const { data } = await apiClient.get('/api/order/my-order', {
+    params: cleanParams,
+  });
+
   if (Array.isArray(data)) return data as Order[];
   const d = data as Record<string, unknown>;
+  if (d.data && typeof d.data === 'object') {
+    const inner = d.data as Record<string, unknown>;
+    if (Array.isArray(inner.orders)) return inner.orders as Order[];
+  }
   if (Array.isArray(d.data)) return d.data as Order[];
   return [];
 }

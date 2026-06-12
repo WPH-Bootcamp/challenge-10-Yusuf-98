@@ -34,36 +34,46 @@ export interface RegisterPayload {
 
 // ── Restaurant ───────────────────────────────────────────────────────────────
 export interface Restaurant {
-  id: string;
+  id: string | number;
   name: string;
   logo?: string;
   images?: string[];
-  rating: number;
+  star?: number;
+  rating?: number;
   reviewCount?: number;
-  location: string;
+  place?: string;
+  location?: string;
   distance?: number;
   category?: string;
   priceMin?: number;
   priceMax?: number;
+  priceRange?: { min: number; max: number };
   description?: string;
 }
 
 export interface MenuItem {
-  id: string;
-  name: string;
+  id: string | number;
+  name?: string;
+  foodName?: string;
   price: number;
   image?: string;
   category?: string;
+  type?: string;
   description?: string;
-  restaurantId?: string;
+  restaurantId?: string | number;
 }
 
 export interface Review {
-  id: string;
-  userId: string;
-  userName: string;
+  id: string | number;
+  userId?: string | number;
+  userName?: string;
   userAvatar?: string;
-  restaurantId: string;
+  user?: {
+    id: number;
+    name: string;
+    avatar?: string | null;
+  };
+  restaurantId?: string | number;
   star: number;
   comment: string;
   createdAt: string;
@@ -71,10 +81,14 @@ export interface Review {
 }
 
 export interface RestaurantDetail extends Restaurant {
-  menu: MenuItem[];
+  menu?: MenuItem[];
+  menus?: MenuItem[];
   reviews: Review[];
+  averageRating?: number;
+  totalMenus?: number;
+  totalReviews?: number;
+  coordinates?: { lat: number; long: number };
 }
-
 // ── Filter ───────────────────────────────────────────────────────────────────
 export interface RestaurantFilter {
   location?: string;
@@ -89,18 +103,35 @@ export interface RestaurantFilter {
 
 // ── Cart ─────────────────────────────────────────────────────────────────────
 export interface CartItem {
-  id: string;
-  menuId: string;
-  restaurantId: string;
+  id: string | number;
+  menuId?: string | number;
+  restaurantId?: string | number;
   quantity: number;
-  menu: MenuItem;
-  restaurant?: Restaurant;
+  itemTotal?: number;
+  menu: {
+    id: string | number;
+    foodName?: string;
+    name?: string;
+    price: number;
+    image?: string;
+    type?: string;
+  };
+  restaurant?: {
+    id: string | number;
+    name: string;
+    logo?: string;
+  };
 }
 
 export interface CartGroup {
-  restaurant: Restaurant;
+  restaurant: {
+    id: string | number;
+    name: string;
+    logo?: string;
+  };
   items: CartItem[];
-  total: number;
+  subtotal?: number;
+  total?: number;
 }
 
 // ── Order ────────────────────────────────────────────────────────────────────
@@ -112,29 +143,52 @@ export type OrderStatus =
   | 'canceled';
 
 export interface OrderItem {
-  menuId: string;
+  menuId: string | number;
+  menuName?: string;
+  name?: string;
+  price: number;
+  image?: string;
   quantity: number;
-  menu: MenuItem;
+  itemTotal?: number;
 }
 
 export interface Order {
-  id: string;
-  restaurantId: string;
-  restaurant: Restaurant;
-  items: OrderItem[];
-  total: number;
-  status: OrderStatus;
-  deliveryAddress: string;
-  paymentMethod: string;
-  notes?: string;
-  createdAt: string;
+  id: string | number;
   transactionId?: string;
+  status: OrderStatus;
+  paymentMethod: string;
+  deliveryAddress: string;
+  phone?: string;
+  pricing?: {
+    subtotal: number;
+    serviceFee: number;
+    deliveryFee: number;
+    totalPrice: number;
+  };
+  total?: number;
+  restaurants?: {
+    restaurant: {
+      id: string | number;
+      name: string;
+      logo?: string;
+    };
+    items: OrderItem[];
+    subtotal: number;
+  }[];
+  items?: OrderItem[];
+  restaurant?: {
+    id: string | number;
+    name: string;
+    logo?: string;
+  };
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface CheckoutPayload {
   restaurants: {
-    restaurantId: string;
-    items: { menuId: string; quantity: number }[];
+    restaurantId: string | number;
+    items: { menuId: string | number; quantity: number }[];
   }[];
   deliveryAddress: string;
   phone?: string;
@@ -145,8 +199,8 @@ export interface CheckoutPayload {
 // ── Review ───────────────────────────────────────────────────────────────────
 export interface ReviewPayload {
   transactionId: string;
-  restaurantId: string;
+  restaurantId: string | number;
   star: number;
   comment: string;
-  menuIds?: string[];
+  menuIds?: (string | number)[];
 }

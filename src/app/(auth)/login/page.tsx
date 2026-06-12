@@ -26,81 +26,80 @@ function LoginContent() {
   if (isAuthenticated) return null;
 
   return (
-    <div className='custom-container flex h-[clamp(546px,71.13vw,1024px)]'>
-      {/* Left — hero image */}
-      <div className='relative hidden w-1/2 md:block'>
-        <Image
-          src={CBP}
-          alt='Cheese Burger With Fries'
-          fill
-          className='w-[clamp(384px,50vw,720px)] h-auto'
-          priority
-        />
-      </div>
-
-      {/* Right — form */}
-      <div
-        className='flex w-full justify-center gap-4 md:gap-5 bg-white md:w-1/2'
-        style={{ paddingTop: 'clamp(204px, 6.471vw + 178.569px, 272px)' }}
-      >
+    <div className='flex min-h-screen w-full justify-center'>
+      <div className='flex w-full max-w-360'>
+        {/* Left — hero image */}
         <div
-          className='flex w-full flex-col px-6'
-          style={{
-            maxWidth: 'clamp(345px, 2.787vw + 334.051px, 374px)',
-            gap: 'clamp(16px, 1.569vw + 9.804px, 20px)',
-          }}
+          className='hidden md:block md:w-1/2 overflow-hidden'
+          style={{ aspectRatio: '720/1024' }}
         >
-          {/* Logo */}
-          <Link href='/'>
-            <Image
-              src={LogoColor}
-              alt='Foody'
-              className='w-auto object-contain'
-              style={{ height: 'clamp(32px, 2.923vw + 20.518px, 42px)' }}
-            />
-          </Link>
+          <Image
+            src={CBP}
+            alt='Cheese Burger With Fries'
+            width={720}
+            height={1024}
+            className='w-full h-full object-cover'
+            priority
+          />
+        </div>
 
-          {/* Title */}
-          <div className='flex flex-col gap-1'>
-            <h1 className='text-display-sm font-extrabold text-neutral-950'>
-              Welcome Back
-            </h1>
-            <p
-              className='text-md font-medium text-neutral-950'
-              style={{ letterSpacing: '-0.03em' }}
-            >
-              Good to see you again! Let&apos;s eat
-            </p>
+        {/* Right — form */}
+        <div className='flex w-full md:w-1/2 items-center justify-center bg-white py-16'>
+          <div
+            className='flex w-full flex-col max-w-93.5'
+            style={{
+              gap: 'clamp(16px, 1.569vw + 9.804px, 20px)',
+            }}
+          >
+            {/* Logo */}
+            <Link href='/'>
+              <Image
+                src={LogoColor}
+                alt='Foody'
+                className='w-auto object-contain'
+                style={{ height: 'clamp(32px, 2.923vw + 20.518px, 42px)' }}
+              />
+            </Link>
+
+            {/* Title */}
+            <div className='flex flex-col gap-1'>
+              <h1 className='text-display-xs md:text-display-sm font-extrabold text-neutral-950'>
+                Welcome Back
+              </h1>
+              <p className='text-sm md:text-md md:tracking-tight-3 font-medium text-neutral-950'>
+                Good to see you again! Let’s eat
+              </p>
+            </div>
+
+            {/* Tab switcher */}
+            <div className='flex items-center rounded-2xl bg-neutral-100 p-2 gap-2'>
+              <Button
+                type='button'
+                variant={activeTab === 'signin' ? 'outline' : 'ghost'}
+                size='sm'
+                onClick={() => setActiveTab('signin')}
+                className='flex-1'
+              >
+                Sign in
+              </Button>
+              <Button
+                type='button'
+                variant={activeTab === 'signup' ? 'outline' : 'ghost'}
+                size='sm'
+                onClick={() => setActiveTab('signup')}
+                className='flex-1'
+              >
+                Sign up
+              </Button>
+            </div>
+
+            {/* Form */}
+            {activeTab === 'signin' ? (
+              <LoginForm onSwitchTab={() => setActiveTab('signup')} />
+            ) : (
+              <RegisterForm onSwitchTab={() => setActiveTab('signin')} />
+            )}
           </div>
-
-          {/* Tab switcher */}
-          <div className='flex rounded-2xl bg-neutral-100 p-1 gap-1'>
-            <Button
-              type='button'
-              variant={activeTab === 'signin' ? 'outline' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('signin')}
-              className='flex-1'
-            >
-              Sign in
-            </Button>
-            <Button
-              type='button'
-              variant={activeTab === 'signup' ? 'outline' : 'ghost'}
-              size='sm'
-              onClick={() => setActiveTab('signup')}
-              className='flex-1'
-            >
-              Sign up
-            </Button>
-          </div>
-
-          {/* Form */}
-          {activeTab === 'signin' ? (
-            <LoginForm onSwitchTab={() => setActiveTab('signup')} />
-          ) : (
-            <RegisterForm onSwitchTab={() => setActiveTab('signin')} />
-          )}
         </div>
       </div>
     </div>

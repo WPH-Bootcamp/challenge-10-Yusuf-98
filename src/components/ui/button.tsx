@@ -11,20 +11,20 @@ const buttonVariants = cva(
         default:
           'bg-primary-100 rounded-full text-md -tracking-2 font-bold text-neutral-25 hover:bg-primary-hover focus-visible:ring-primary-100 active:scale-101',
         outline:
-          'bg-white shadow-[0px_0px_20px_rgba(203,202,202,0.25)] rounded-xl text-neutral-950 -tracking-2 hover:bg-gray-50 focus-visible:ring-gray-400',
+          'bg-white shadow-[0px_0px_20px_rgba(203,202,202,0.25)] rounded-xl text-neutral-950 font-bold tracking-tight-2 hover:bg-gray-50 focus-visible:ring-gray-400',
         ghost:
-          'bg-transparent text-neutral-600 md:-tracking-3 hover:bg-gray-100 focus-visible:ring-gray-400',
+          'bg-transparent text-neutral-600 font-medium md:tracking-tight-3 hover:bg-gray-100 focus-visible:ring-gray-400',
         secondary:
-          'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-400',
-        destructive:
-          'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+          'bg-white text-neutral-950 font-bold tracking-tight-2 rounded-full hover:bg-neutral-400 focus-visible:ring-neutral-600',
+        outlineGhost:
+          'bg-transparent text-white font-bold tracking-tight-2 rounded-full border border-0.5 border-neutral-300 hover:bg-primary-100 focus-visible:ring-red-500',
         link: 'text-primary-100 underline-offset-4 hover:underline p-0 h-auto rounded-none',
       },
       size: {
         sm: 'h-9 md:h-10 py-2 px-3 gap-2 text-sm md:text-md',
         md: 'h-10 py-2 px-3 gap-2 text-sm md:text-md',
         default: 'h-12 px-2 py-2 gap-2',
-        lg: 'h-12 px-8 text-base',
+        lg: 'h-10 md:h-12 p-2 gap-2 text-sm md:text-md',
         xl: 'h-14 px-10 text-base',
         icon: 'h-9 w-9 p-0',
       },

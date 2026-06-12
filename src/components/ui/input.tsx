@@ -91,7 +91,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               paddingRight: rightIcon ? '40px' : '12px',
             }}
             className={cn(
-              'w-full h-12 md:h-14 rounded-xl md:rounded-lg border border-neutral-300 bg-white font-semibold text-sm md:text-md text-neutral-950 -tracking-tight-2 transition-all placeholder-transparent',
+              'w-full h-12 md:h-14 rounded-xl md:rounded-lg border border-neutral-300 bg-white font-semibold text-sm md:text-md text-neutral-950 tracking-tight-2 transition-all placeholder-transparent',
               'focus:border-primary-100 focus:outline-none focus:ring-1 focus:ring-primary-100/15',
               'disabled:cursor-not-allowed disabled:opacity-50',
               rightIcon && 'pr-10',

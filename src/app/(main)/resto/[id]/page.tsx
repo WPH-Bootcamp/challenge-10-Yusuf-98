@@ -3,7 +3,7 @@
 import { use, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Star, MapPin, Share2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Share2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useRestaurantDetail, useAddToCart } from '@/lib/query/hooks';
 import { useAuthStore } from '@/store/auth.store';
 import { useRouter } from 'next/navigation';
@@ -11,6 +11,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { StarRating } from '@/components/shared/StarRating';
 import { MenuCardSkeleton } from '@/components/shared/Skeletons';
 import { toast } from '@/hooks/use-toast';
+import StarIcon from '@/assets/icons/star.png';
 import type { MenuItem } from '@/types';
 
 type Params = Promise<{ id: string }>;
@@ -27,10 +28,11 @@ export default function RestoDetailPage({ params }: { params: Params }) {
   const { data: resto, isLoading, error } = useRestaurantDetail(id);
   const addToCart = useAddToCart();
 
-  function changeQty(menuId: string, delta: number) {
+  function changeQty(menuId: string | number, delta: number) {
+    const key = String(menuId);
     setQuantities((p) => ({
       ...p,
-      [menuId]: Math.max(0, (p[menuId] ?? 0) + delta),
+      [key]: Math.max(0, (p[key] ?? 0) + delta),
     }));
   }
 
@@ -39,15 +41,17 @@ export default function RestoDetailPage({ params }: { params: Params }) {
       router.push('/login');
       return;
     }
-    const qty = Math.max(1, quantities[item.id] ?? 1);
+    const key = String(item.id);
+    const qty = Math.max(1, quantities[key] ?? 1);
     try {
       await addToCart.mutateAsync({
-        restaurantId: id,
-        menuId: item.id,
+        restaurantId: Number(id),
+        menuId: Number(item.id),
         quantity: qty,
       });
-      toast({ title: `${item.name} ditambahkan ke cart`, variant: 'success' });
-      setQuantities((p) => ({ ...p, [item.id]: 0 }));
+      const name = item.foodName ?? item.name ?? 'Item';
+      toast({ title: `${name} ditambahkan ke cart`, variant: 'success' });
+      setQuantities((p) => ({ ...p, [key]: 0 }));
     } catch {
       toast({ title: 'Gagal menambah ke cart', variant: 'error' });
     }
@@ -70,18 +74,22 @@ export default function RestoDetailPage({ params }: { params: Params }) {
     );
   }
 
-  const allMenu = resto?.menu ?? [];
+  const rating = resto?.star ?? resto?.rating ?? resto?.averageRating;
+  const location = resto?.place ?? resto?.location;
+  const allMenu = resto?.menus ?? resto?.menu ?? [];
   const filteredMenu =
     activeTab === 'all'
       ? allMenu
-      : allMenu.filter((m) => m.category?.toLowerCase() === activeTab);
+      : allMenu.filter(
+          (m) => (m.type ?? m.category)?.toLowerCase() === activeTab
+        );
   const displayMenu = showAllMenu ? filteredMenu : filteredMenu.slice(0, 8);
   const allReviews = resto?.reviews ?? [];
   const displayReviews = showAllReviews ? allReviews : allReviews.slice(0, 6);
 
   const totalItems = Object.values(quantities).reduce((s, q) => s + q, 0);
   const totalPrice = allMenu.reduce(
-    (s, m) => s + (quantities[m.id] ?? 0) * m.price,
+    (s, m) => s + (quantities[String(m.id)] ?? 0) * m.price,
     0
   );
 
@@ -102,6 +110,7 @@ export default function RestoDetailPage({ params }: { params: Params }) {
                 src={resto?.images?.[0] ?? placeholder}
                 alt={resto?.name ?? ''}
                 fill
+                sizes='50vw'
                 className='object-cover'
                 priority
               />
@@ -114,6 +123,7 @@ export default function RestoDetailPage({ params }: { params: Params }) {
                       src={resto?.images?.[i] ?? placeholder}
                       alt={`Photo ${i}`}
                       fill
+                      sizes='25vw'
                       className='object-cover'
                     />
                   </div>
@@ -124,6 +134,7 @@ export default function RestoDetailPage({ params }: { params: Params }) {
                   src={resto?.images?.[3] ?? placeholder}
                   alt='Photo 4'
                   fill
+                  sizes='50vw'
                   className='object-cover'
                 />
               </div>
@@ -135,6 +146,7 @@ export default function RestoDetailPage({ params }: { params: Params }) {
               src={resto?.images?.[0] ?? placeholder}
               alt={resto?.name ?? ''}
               fill
+              sizes='100vw'
               className='object-cover'
               priority
             />
@@ -178,20 +190,13 @@ export default function RestoDetailPage({ params }: { params: Params }) {
                   resto?.name
                 )}
               </h1>
-              <div className='mt-1 flex items-center gap-1.5'>
-                <Star className='h-4 w-4 fill-star text-star' />
+              <div className='mt-1 flex items-center gap-1'>
+                <Image src={StarIcon} alt='Star' width={16} height={16} />
                 <span className='text-sm font-semibold text-neutral-800'>
-                  {resto?.rating?.toFixed(1)}
+                  {rating?.toFixed(1)}
                 </span>
               </div>
-              <div className='mt-0.5 flex items-center gap-1 text-sm text-neutral-500'>
-                <MapPin className='h-3.5 w-3.5 shrink-0' />
-                <span>
-                  {resto?.location}
-                  {resto?.distance != null &&
-                    ` · ${resto.distance.toFixed(1)} km`}
-                </span>
-              </div>
+              <div className='mt-0.5 text-sm text-neutral-500'>{location}</div>
             </div>
           </div>
           <button className='flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 shadow-sm transition-colors hover:bg-neutral-50'>
@@ -237,7 +242,9 @@ export default function RestoDetailPage({ params }: { params: Params }) {
             <>
               <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
                 {displayMenu.map((item) => {
-                  const qty = quantities[item.id] ?? 0;
+                  const key = String(item.id);
+                  const qty = quantities[key] ?? 0;
+                  const itemName = item.foodName ?? item.name ?? 'Menu';
                   return (
                     <div
                       key={item.id}
@@ -246,15 +253,16 @@ export default function RestoDetailPage({ params }: { params: Params }) {
                       <div className='relative h-36 w-full bg-neutral-100 sm:h-40'>
                         <Image
                           src={item.image ?? placeholder}
-                          alt={item.name}
+                          alt={itemName}
                           fill
+                          sizes='(max-width: 768px) 50vw, 25vw'
                           className='object-cover'
                           unoptimized
                         />
                       </div>
                       <div className='p-3'>
                         <p className='line-clamp-1 text-sm font-semibold text-neutral-900'>
-                          {item.name}
+                          {itemName}
                         </p>
                         <p className='mt-0.5 text-sm font-bold text-neutral-900'>
                           {formatCurrency(item.price)}
@@ -310,9 +318,9 @@ export default function RestoDetailPage({ params }: { params: Params }) {
         <section className='py-8'>
           <h2 className='mb-2 text-xl font-bold text-neutral-900'>Review</h2>
           <div className='mb-6 flex items-center gap-2'>
-            <Star className='h-5 w-5 fill-star text-star' />
+            <Image src={StarIcon} alt='Star' width={20} height={20} />
             <span className='text-lg font-bold text-neutral-900'>
-              {resto?.rating?.toFixed(1)}
+              {rating?.toFixed(1)}
             </span>
             <span className='text-sm text-neutral-500'>
               ({allReviews.length} Ulasan)
@@ -324,41 +332,46 @@ export default function RestoDetailPage({ params }: { params: Params }) {
           ) : (
             <>
               <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-                {displayReviews.map((review) => (
-                  <div
-                    key={review.id}
-                    className='rounded-xl border border-neutral-100 bg-white p-4 shadow-sm'
-                  >
-                    <div className='mb-3 flex items-center gap-3'>
-                      <div className='flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-200'>
-                        {review.userAvatar ? (
-                          <Image
-                            src={review.userAvatar}
-                            alt={review.userName}
-                            width={40}
-                            height={40}
-                            className='h-full w-full object-cover'
-                            unoptimized
-                          />
-                        ) : (
-                          <span className='text-lg'>👤</span>
-                        )}
+                {displayReviews.map((review) => {
+                  const userName =
+                    review.user?.name ?? review.userName ?? 'User';
+                  const userAvatar = review.user?.avatar ?? review.userAvatar;
+                  return (
+                    <div
+                      key={review.id}
+                      className='rounded-xl border border-neutral-100 bg-white p-4 shadow-sm'
+                    >
+                      <div className='mb-3 flex items-center gap-3'>
+                        <div className='flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-neutral-200'>
+                          {userAvatar ? (
+                            <Image
+                              src={userAvatar}
+                              alt={userName}
+                              width={40}
+                              height={40}
+                              className='h-full w-full object-cover'
+                              unoptimized
+                            />
+                          ) : (
+                            <span className='text-lg'>👤</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className='text-sm font-semibold text-neutral-900'>
+                            {userName}
+                          </p>
+                          <p className='text-xs text-neutral-500'>
+                            {formatDate(review.createdAt)}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className='text-sm font-semibold text-neutral-900'>
-                          {review.userName}
-                        </p>
-                        <p className='text-xs text-neutral-500'>
-                          {formatDate(review.createdAt)}
-                        </p>
-                      </div>
+                      <StarRating value={review.star} readonly size='sm' />
+                      <p className='mt-2 text-sm leading-relaxed text-neutral-700'>
+                        {review.comment}
+                      </p>
                     </div>
-                    <StarRating value={review.star} readonly size='sm' />
-                    <p className='mt-2 text-sm leading-relaxed text-neutral-700'>
-                      {review.comment}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               {allReviews.length > 6 && (
                 <div className='mt-6 flex justify-center'>

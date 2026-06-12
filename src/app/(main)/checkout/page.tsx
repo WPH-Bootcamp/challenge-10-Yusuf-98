@@ -50,14 +50,17 @@ function CheckoutContent() {
   if (!isAuthenticated) return null;
 
   const targetGroups = restaurantId
-    ? (cartGroups ?? []).filter((g) => g.restaurant?.id === restaurantId)
+    ? (cartGroups ?? []).filter(
+        (g) => String(g.restaurant?.id) === String(restaurantId)
+      )
     : (cartGroups ?? []);
 
   const subtotal = targetGroups.reduce(
     (sum, g) =>
       sum +
       g.items.reduce(
-        (s, i) => s + (i.menu?.price ?? 0) * (localQty[i.id] ?? i.quantity),
+        (s, i) =>
+          s + (i.menu?.price ?? 0) * (localQty[String(i.id)] ?? i.quantity),
         0
       ),
     0
@@ -76,10 +79,10 @@ function CheckoutContent() {
     try {
       await checkout.mutateAsync({
         restaurants: targetGroups.map((g) => ({
-          restaurantId: g.restaurant.id,
+          restaurantId: Number(g.restaurant.id),
           items: g.items.map((i) => ({
-            menuId: i.menuId,
-            quantity: localQty[i.id] ?? i.quantity,
+            menuId: Number(i.menu?.id),
+            quantity: localQty[String(i.id)] ?? i.quantity,
           })),
         })),
         deliveryAddress: values.deliveryAddress,
@@ -170,7 +173,10 @@ function CheckoutContent() {
                     </div>
                     <div className='space-y-4'>
                       {group.items.map((item) => {
-                        const qty = localQty[item.id] ?? item.quantity;
+                        const key = String(item.id);
+                        const qty = localQty[key] ?? item.quantity;
+                        const itemName =
+                          item.menu?.foodName ?? item.menu?.name ?? 'Item';
                         return (
                           <div
                             key={item.id}
@@ -179,15 +185,16 @@ function CheckoutContent() {
                             <div className='relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-neutral-100'>
                               <Image
                                 src={item.menu?.image ?? placeholder}
-                                alt={item.menu?.name ?? ''}
+                                alt={itemName}
                                 fill
+                                sizes='56px'
                                 className='object-cover'
                                 unoptimized
                               />
                             </div>
                             <div className='min-w-0 flex-1'>
                               <p className='line-clamp-1 text-sm font-semibold text-neutral-900'>
-                                {item.menu?.name}
+                                {itemName}
                               </p>
                               <p className='text-sm text-neutral-500'>
                                 {formatCurrency(item.menu?.price ?? 0)}
@@ -199,9 +206,9 @@ function CheckoutContent() {
                                 onClick={() =>
                                   setLocalQty((p) => ({
                                     ...p,
-                                    [item.id]: Math.max(
+                                    [key]: Math.max(
                                       1,
-                                      (p[item.id] ?? item.quantity) - 1
+                                      (p[key] ?? item.quantity) - 1
                                     ),
                                   }))
                                 }
@@ -217,8 +224,7 @@ function CheckoutContent() {
                                 onClick={() =>
                                   setLocalQty((p) => ({
                                     ...p,
-                                    [item.id]:
-                                      (p[item.id] ?? item.quantity) + 1,
+                                    [key]: (p[key] ?? item.quantity) + 1,
                                   }))
                                 }
                                 className='flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-white hover:bg-primary-hover transition-colors'

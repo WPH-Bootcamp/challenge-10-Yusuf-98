@@ -30,7 +30,6 @@ apiClient.interceptors.response.use(
       if (typeof window !== 'undefined') {
         localStorage.removeItem('foody_token');
         localStorage.removeItem('foody_auth');
-        window.location.href = '/login';
       }
     }
     return Promise.reject(error);

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Star, MapPin } from 'lucide-react';
+import StarIcon from '@/assets/icons/star.png';
+import LocationIcon from '@/assets/icons/location.png';
 import type { Restaurant } from '@/types';
 
 interface RestaurantCardProps {
@@ -8,42 +9,59 @@ interface RestaurantCardProps {
 }
 
 export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  const rating = restaurant.star ?? restaurant.rating;
+  const location = restaurant.place ?? restaurant.location;
+
   return (
     <Link
       href={`/resto/${restaurant.id}`}
-      className='flex items-center gap-3 rounded-2xl border border-neutral-100 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md'
+      className='flex items-center gap-3 md:gap-4 rounded-2xl bg-white shadow-card transition-all hover-scale-105'
+      style={{ padding: '16px' }}
     >
-      <div className='flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-orange-50'>
+      {/* Logo */}
+      <div
+        className='shrink-0 overflow-hidden rounded-xl bg-orange-50 flex items-center justify-center'
+        style={{
+          width: 'clamp(90px, 8.333vw, 120px)',
+          height: 'clamp(90px, 8.333vw, 120px)',
+        }}
+      >
         {restaurant.logo ? (
           <Image
             src={restaurant.logo}
             alt={restaurant.name}
-            width={56}
-            height={56}
-            className='h-full w-full object-cover'
+            width={120}
+            height={120}
+            className='w-full h-full object-cover'
             unoptimized
           />
         ) : (
-          <span className='text-2xl'>🍔</span>
+          <span className='text-4xl'>🍔</span>
         )}
       </div>
-      <div className='min-w-0 flex-1'>
-        <p className='truncate text-sm font-semibold text-neutral-900'>
+
+      {/* Info */}
+      <div className='flex flex-col gap-0.5 flex-1' style={{ minWidth: 0 }}>
+        {/* Name */}
+        <p className='text-md md:text-lg font-extrabold text-neutral-950 md:tracking-tight-2 line-clamp-1'>
           {restaurant.name}
         </p>
-        <div className='mt-0.5 flex items-center gap-1'>
-          <Star className='h-3 w-3 fill-star text-star' />
-          <span className='text-xs font-medium text-neutral-700'>
-            {restaurant.rating?.toFixed(1)}
+
+        {/* Rating */}
+        <div className='flex items-center gap-1'>
+          <Image src={StarIcon} alt='Star' width={24} height={24} />
+          <span className='text-sm md:text-md font-medium text-neutral-950 md:tracking-tight-3'>
+            {rating?.toFixed(1)}
           </span>
         </div>
-        <div className='mt-0.5 flex items-center gap-1 text-xs text-neutral-500'>
-          <MapPin className='h-3 w-3 shrink-0' />
-          <span className='truncate'>
-            {restaurant.location}
+
+        {/* Location + Distance */}
+        <div className='flex items-center gap-1.5'>
+          <p className='text-sm md:text-md text-neutral-950 tracking-tight-2 line-clamp-1'>
+            {location}
             {restaurant.distance != null &&
               ` · ${restaurant.distance.toFixed(1)} km`}
-          </span>
+          </p>
         </div>
       </div>
     </Link>

@@ -7,8 +7,18 @@ function toArray(data: unknown): Restaurant[] {
   if (!data) return [];
   if (Array.isArray(data)) return data as Restaurant[];
   const d = data as Record<string, unknown>;
+  // { data: { recommendations: [] } }
+  if (d.data && typeof d.data === 'object') {
+    const inner = d.data as Record<string, unknown>;
+    if (Array.isArray(inner.recommendations))
+      return inner.recommendations as Restaurant[];
+    if (Array.isArray(inner.restaurants))
+      return inner.restaurants as Restaurant[];
+  }
   if (Array.isArray(d.data)) return d.data as Restaurant[];
   if (Array.isArray(d.restaurants)) return d.restaurants as Restaurant[];
+  if (Array.isArray(d.recommendations))
+    return d.recommendations as Restaurant[];
   if (Array.isArray(d.items)) return d.items as Restaurant[];
   return [];
 }
