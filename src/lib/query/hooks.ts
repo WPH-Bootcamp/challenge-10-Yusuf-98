@@ -72,12 +72,16 @@ export function useRecommended(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useNearby(params?: { range?: number; limit?: number }) {
+export function useNearby(
+  params?: { range?: number; limit?: number },
+  enabled = true
+) {
   return useQuery({
     queryKey: queryKeys.nearby(params),
     queryFn: () => restoApi.getNearby(params),
     staleTime: 1000 * 60 * 5,
     retry: 1,
+    enabled,
   });
 }
 

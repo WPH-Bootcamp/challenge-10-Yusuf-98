@@ -33,7 +33,7 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className='w-full border-t bg-neutral-950 border-neutral-300'>
-      <div className='mx-auto flex w-full max-w-360 flex-col items-start gap-6 md:gap-0 md:flex-row md:justify-between py-10 md:py-20 px-4 md:px-30'>
+      <div className='custom-container flex flex-col items-start gap-6 md:gap-0 md:flex-row md:justify-between py-10 md:py-20'>
         {/* Brand — Content Container */}
         <div className='flex flex-col gap-4 md:gap-10 w-full md:w-95 md:min-w-60'>
           <div className='flex flex-col gap-5.5'>

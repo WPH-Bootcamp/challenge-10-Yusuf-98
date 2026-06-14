@@ -192,6 +192,7 @@ export default function HomePage() {
                   <Button
                     variant={'outline'}
                     size={'lg'}
+                    onClick={() => setShowMore(true)}
                     className='w-40 rounded-full border border-neutral-300 text-sm md:text-md font-bold text-neutral-950 tracking-tight-2 transition-all hover-scale-105'
                   >
                     Show More

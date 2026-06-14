@@ -8,6 +8,8 @@ interface StarRatingProps {
   onChange?: (value: number) => void;
   readonly?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  starClassName?: string;
+  containerClassName?: string;
 }
 
 export function StarRating({
@@ -15,11 +17,17 @@ export function StarRating({
   onChange,
   readonly = false,
   size = 'md',
+  starClassName,
+  containerClassName,
 }: StarRatingProps) {
-  const sizeMap = { sm: 'h-4 w-4', md: 'h-5 w-5', lg: 'h-7 w-7' };
+  const sizeMap = {
+    sm: 'h-4 w-4',
+    md: 'h-4.5 w-4.5',
+    lg: 'h-5 w-5',
+  };
 
   return (
-    <div className='flex items-center gap-1'>
+    <div className={cn('flex items-center gap-1.5', containerClassName)}>
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
@@ -35,10 +43,10 @@ export function StarRating({
         >
           <Star
             className={cn(
-              sizeMap[size],
+              starClassName ?? sizeMap[size],
               star <= value
                 ? 'fill-star text-star'
-                : 'fill-neutral-200 text-neutral-200'
+                : 'fill-neutral-400 text-neutral-400'
             )}
           />
         </button>

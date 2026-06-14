@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth.store';
 import { useCart } from '@/lib/query/hooks';
@@ -19,14 +19,20 @@ import LogoutIcon from '@/assets/icons/arrow-circle-broken-left.png';
 import BagWhite from '@/assets/icons/bag-white.png';
 import BagBlack from '@/assets/icons/bag-black.png';
 
+const TRANSPARENT_PAGES = ['/'];
+
 export function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const { isAuthenticated, user, logout } = useAuthStore();
   const { data: cartGroups } = useCart();
   const qc = useQueryClient();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isHomePage = TRANSPARENT_PAGES.includes(pathname ?? '');
+  const isSolid = scrolled || !isHomePage;
 
   const totalCartItems =
     cartGroups?.reduce(
@@ -66,21 +72,21 @@ export function Navbar() {
     <header
       className='fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300'
       style={{
-        backgroundColor: scrolled ? 'var(--color-white)' : 'transparent',
-        boxShadow: scrolled ? '0px 0px 20px rgba(203, 202, 202, 0.25)' : 'none',
+        backgroundColor: isSolid ? 'var(--color-white)' : 'transparent',
+        boxShadow: isSolid ? '0px 0px 20px rgba(203, 202, 202, 0.25)' : 'none',
       }}
     >
-      <div className='mx-auto flex h-16 w-full max-w-360 items-center justify-between px-4 md:h-20 md:px-30'>
+      <div className='custom-container flex h-16 items-center justify-between md:h-20'>
         {/* Logo */}
         <Link href='/'>
           <Image
-            src={scrolled ? IconLogoColor : IconLogo}
+            src={isSolid ? IconLogoColor : IconLogo}
             alt='Foody'
             className='block w-auto h-10 md:h-10.5 md:hidden'
             priority
           />
           <Image
-            src={scrolled ? LogoColor : Logo}
+            src={isSolid ? LogoColor : Logo}
             alt='Foody'
             className='hidden w-auto h-10 md:h-10.5 md:block'
             priority
@@ -95,15 +101,15 @@ export function Navbar() {
               <Link
                 href='/cart'
                 aria-label='Cart'
-                className='relative flex h-7 w-7 md:h-10 md:w-10 items-center justify-center rounded-full transition-colors hover:bg-white/10'
+                className='relative flex h-7 w-7 md:h-8 md:w-8 items-center justify-center rounded-full transition-colors hover:bg-white/10'
               >
                 <Image
-                  src={scrolled ? BagBlack : BagWhite}
+                  src={isSolid ? BagBlack : BagWhite}
                   alt='Cart'
                   className='w-full h-full transition-all duration-300'
                 />
                 {totalCartItems > 0 && (
-                  <span className='absolute -right-0.5 -top-0.5 flex h-1.5 w-1.5 items-center justify-center rounded-full bg-primary-100 text-[12px] font-bold text-white'>
+                  <span className='absolute -right-2 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-100 text-xs tracking-tight-2 font-bold text-white'>
                     {totalCartItems > 99 ? '99+' : totalCartItems}
                   </span>
                 )}
@@ -137,7 +143,7 @@ export function Navbar() {
                   <span
                     className='hidden max-w-30 truncate text-lg font-semibold transition-colors duration-300 md:block'
                     style={{
-                      color: scrolled
+                      color: isSolid
                         ? 'var(--color-neutral-950)'
                         : 'var(--color-white)',
                     }}
@@ -217,12 +223,12 @@ export function Navbar() {
             <div className='flex items-center gap-3 md:gap-4'>
               <Link
                 href='/login'
-                className={`flex items-center justify-center h-10 md:h-12 w-30 md:w-40.75 bg-transparent rounded-full border-2 p-2 text-sm md:text-md tracking-tight-2 font-bold text-center transition-all duration-300 md:px-5 ${scrolled ? 'hover-dark' : 'hover-light'}`}
+                className={`flex items-center justify-center h-10 md:h-12 w-30 md:w-40.75 bg-transparent rounded-full border-2 p-2 text-sm md:text-md tracking-tight-2 font-bold text-center transition-all duration-300 md:px-5 ${isSolid ? 'hover-dark' : 'hover-light'}`}
                 style={{
-                  borderColor: scrolled
+                  borderColor: isSolid
                     ? 'var(--color-neutral-300)'
                     : 'var(--color-white)',
-                  color: scrolled
+                  color: isSolid
                     ? 'var(--color-neutral-700)'
                     : 'var(--color-white)',
                 }}
@@ -233,10 +239,10 @@ export function Navbar() {
                 href='/register'
                 className='flex items-center justify-center h-10 md:h-12 w-30 md:w-40.75 rounded-full p-2 gap-2 text-sm md:text-md tracking-tight-2 font-bold text-center transition-all duration-300 md:px-5 hover-dim'
                 style={{
-                  backgroundColor: scrolled
+                  backgroundColor: isSolid
                     ? 'var(--color-primary-100)'
                     : 'var(--color-white)',
-                  color: scrolled
+                  color: isSolid
                     ? 'var(--color-white)'
                     : 'var(--color-neutral-950)',
                 }}
