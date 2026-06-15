@@ -1,0 +1,117 @@
+'use client';
+
+import { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import CBP from '@/assets/images/login-image.png';
+import LogoColor from '@/assets/images/logo-color.png';
+import { LoginForm } from '@/components/features/auth/LoginForm';
+import { RegisterForm } from '@/components/features/auth/RegisterForm';
+import { useAuthStore } from '@/store/auth.store';
+import { Button } from '@/components/ui/button';
+
+function LoginContent() {
+  // --- Auth Guard ---
+  const { isAuthenticated, _hasHydrated } = useAuthStore();
+  const router = useRouter();
+
+  // --- UI State ---
+  const [activeTab, setActiveTab] = useState<'signin' | 'signup'>('signin');
+
+  // --- Redirect if Already Logged In ---
+  useEffect(() => {
+    if (_hasHydrated && isAuthenticated) {
+      router.replace('/');
+    }
+  }, [_hasHydrated, isAuthenticated, router]);
+
+  if (!_hasHydrated) return null;
+  if (isAuthenticated) return null;
+
+  return (
+    <div className='flex min-h-screen w-full justify-center'>
+      <div className='flex w-full max-w-360'>
+        {/* --- Hero Image --- */}
+        <div
+          className='hidden md:block md:w-1/2 overflow-hidden'
+          style={{ aspectRatio: '720/1024' }}
+        >
+          <Image
+            src={CBP}
+            alt='Cheese Burger With Fries'
+            width={720}
+            height={1024}
+            className='w-full h-full object-cover'
+            priority
+          />
+        </div>
+
+        {/* --- Form Section --- */}
+        <div className='flex w-full md:w-1/2 items-center justify-center bg-white py-16'>
+          <div
+            className='flex w-full flex-col max-w-93.5'
+            style={{ gap: 'clamp(16px, 1.569vw + 9.804px, 20px)' }}
+          >
+            {/* --- Logo --- */}
+            <Link href='/'>
+              <Image
+                src={LogoColor}
+                alt='Foody'
+                className='w-auto object-contain'
+                style={{ height: 'clamp(32px, 2.923vw + 20.518px, 42px)' }}
+              />
+            </Link>
+
+            {/* --- Heading --- */}
+            <div className='flex flex-col gap-1'>
+              <h1 className='text-display-xs md:text-display-sm font-extrabold text-neutral-950'>
+                Welcome Back
+              </h1>
+              <p className='text-sm md:text-md md:tracking-tight-3 font-medium text-neutral-950'>
+                Good to see you again! Let's eat
+              </p>
+            </div>
+
+            {/* --- Tab Switcher --- */}
+            <div className='flex items-center rounded-2xl bg-neutral-100 p-2 gap-2'>
+              <Button
+                type='button'
+                variant={activeTab === 'signin' ? 'outline' : 'ghost'}
+                size='sm'
+                onClick={() => setActiveTab('signin')}
+                className='flex-1'
+              >
+                Sign in
+              </Button>
+              <Button
+                type='button'
+                variant={activeTab === 'signup' ? 'outline' : 'ghost'}
+                size='sm'
+                onClick={() => setActiveTab('signup')}
+                className='flex-1'
+              >
+                Sign up
+              </Button>
+            </div>
+
+            {/* --- Auth Form --- */}
+            {activeTab === 'signin' ? (
+              <LoginForm onSwitchTab={() => setActiveTab('signup')} />
+            ) : (
+              <RegisterForm onSwitchTab={() => setActiveTab('signin')} />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
+  );
+}
