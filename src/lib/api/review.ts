@@ -10,6 +10,10 @@ export async function getMyReviews(): Promise<Review[]> {
   const { data } = await apiClient.get('/api/review/my-reviews');
   if (Array.isArray(data)) return data as Review[];
   const d = data as Record<string, unknown>;
+  if (d.data && typeof d.data === 'object') {
+    const inner = d.data as Record<string, unknown>;
+    if (Array.isArray(inner.reviews)) return inner.reviews as Review[];
+  }
   if (Array.isArray(d.data)) return d.data as Review[];
   return [];
 }
@@ -22,6 +26,10 @@ export async function getRestaurantReviews(
   );
   if (Array.isArray(data)) return data as Review[];
   const d = data as Record<string, unknown>;
+  if (d.data && typeof d.data === 'object') {
+    const inner = d.data as Record<string, unknown>;
+    if (Array.isArray(inner.reviews)) return inner.reviews as Review[];
+  }
   if (Array.isArray(d.data)) return d.data as Review[];
   return [];
 }

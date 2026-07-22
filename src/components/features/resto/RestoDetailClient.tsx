@@ -8,7 +8,7 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { Share2, Plus, Minus } from 'lucide-react';
 import BagBlack from '@/assets/icons/bag-black.png';
 import StarIcon from '@/assets/icons/star.png';
-import { useAddToCart } from '@/lib/query/hooks';
+import { useAddToCart } from '@/lib/query/hooks/cart';
 import { useAuthStore } from '@/store/auth.store';
 import { formatCurrency, formatDate, getDummyDistance } from '@/lib/utils';
 import { StarRating } from '@/components/shared/StarRating';
