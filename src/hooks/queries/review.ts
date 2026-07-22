@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as reviewApi from '@/lib/api/review';
 import type { ReviewPayload } from '@/types';
-import { queryKeys } from '../keys';
+import { queryKeys } from './keys';
 
 export function useCreateReview() {
   const qc = useQueryClient();

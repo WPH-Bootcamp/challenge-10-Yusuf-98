@@ -43,7 +43,7 @@ export function getStatusLabel(status: string): string {
     on_the_way: 'On the Way',
     delivered: 'Delivered',
     done: 'Done',
-    canceled: 'Canceled',
+    cancelled: 'Cancelled',
   };
   return labels[status] ?? status;
 }

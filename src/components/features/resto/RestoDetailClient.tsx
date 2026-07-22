@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -8,7 +8,12 @@ import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { Share2, Plus, Minus } from 'lucide-react';
 import BagBlack from '@/assets/icons/bag-black.png';
 import StarIcon from '@/assets/icons/star.png';
-import { useAddToCart } from '@/lib/query/hooks/cart';
+import {
+  useAddToCart,
+  useUpdateCartItem,
+  useDeleteCartItem,
+  useCart,
+} from '@/hooks/queries/cart';
 import { useAuthStore } from '@/store/auth.store';
 import { formatCurrency, formatDate, getDummyDistance } from '@/lib/utils';
 import { StarRating } from '@/components/shared/StarRating';
@@ -44,14 +49,17 @@ export default function RestoDetailClient({
 
   // --- UI State ---
   const [activeTab, setActiveTab] = useState<'all' | 'food' | 'drink'>('all');
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
   const [visibleMenuCount, setVisibleMenuCount] = useState(4);
   const [visibleReviewCount, setVisibleReviewCount] = useState(4);
   const [heroIndex, setHeroIndex] = useState(0);
   const [heroDirection, setHeroDirection] = useState(0);
 
   // --- Data ---
+  const { data: cartGroups } = useCart();
   const addToCart = useAddToCart();
+  const updateCartItem = useUpdateCartItem();
+  const deleteCartItem = useDeleteCartItem();
   const rating = resto?.star ?? resto?.rating ?? resto?.averageRating;
   const location = resto?.place ?? resto?.location;
   const allMenu = resto?.menus ?? resto?.menu ?? [];
@@ -67,6 +75,23 @@ export default function RestoDetailClient({
   const heroImages =
     resto?.images && resto.images.length > 0 ? resto.images : [placeholder];
 
+  // --- Real Cart State for This Restaurant (menuId -> cart item) ---
+  const cartItemsByMenu = useMemo(() => {
+    const map: Record<string, { id: string; quantity: number }> = {};
+    const group = cartGroups?.find(
+      (g) => String(g.restaurant?.id) === String(id)
+    );
+    group?.items.forEach((it) => {
+      if (it.menu?.id != null) {
+        map[String(it.menu.id)] = { id: String(it.id), quantity: it.quantity };
+      }
+    });
+    return map;
+  }, [cartGroups, id]);
+
+  const quantities = Object.fromEntries(
+    Object.entries(cartItemsByMenu).map(([menuId, c]) => [menuId, c.quantity])
+  );
   const totalItems = Object.values(quantities).reduce((s, q) => s + q, 0);
   const totalPrice = allMenu.reduce(
     (s, m) => s + (quantities[String(m.id)] ?? 0) * m.price,
@@ -74,38 +99,43 @@ export default function RestoDetailClient({
   );
 
   // --- Handlers ---
-  function changeQty(menuId: string | number, delta: number) {
-    const key = String(menuId);
-    setQuantities((p) => ({
-      ...p,
-      [key]: Math.max(0, (p[key] ?? 0) + delta),
-    }));
-  }
-
-  function handleTabChange(tab: 'all' | 'food' | 'drink') {
-    setActiveTab(tab);
-    setVisibleMenuCount(4);
-  }
-
-  async function handleAdd(item: MenuItem) {
+  async function changeQty(item: MenuItem, delta: number) {
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
     const key = String(item.id);
-    setQuantities((p) => ({ ...p, [key]: 1 }));
+    const existing = cartItemsByMenu[key];
+    setPendingKey(key);
     try {
-      await addToCart.mutateAsync({
-        restaurantId: Number(id),
-        menuId: Number(item.id),
-        quantity: 1,
-      });
-      const name = item.foodName ?? item.name ?? 'Item';
-      toast({ title: `${name} ditambahkan ke cart`, variant: 'success' });
+      if (!existing) {
+        if (delta > 0) {
+          await addToCart.mutateAsync({
+            restaurantId: Number(id),
+            menuId: Number(item.id),
+            quantity: 1,
+          });
+          const name = item.foodName ?? item.name ?? 'Item';
+          toast({ title: `${name} ditambahkan ke cart`, variant: 'success' });
+        }
+        return;
+      }
+      const newQty = existing.quantity + delta;
+      if (newQty <= 0) {
+        await deleteCartItem.mutateAsync(existing.id);
+      } else {
+        await updateCartItem.mutateAsync({ id: existing.id, quantity: newQty });
+      }
     } catch {
-      toast({ title: 'Gagal menambah ke cart', variant: 'error' });
-      setQuantities((p) => ({ ...p, [key]: 0 }));
+      toast({ title: 'Gagal memperbarui cart', variant: 'error' });
+    } finally {
+      setPendingKey(null);
     }
+  }
+
+  function handleTabChange(tab: 'all' | 'food' | 'drink') {
+    setActiveTab(tab);
+    setVisibleMenuCount(4);
   }
 
   async function handleShare() {
@@ -353,8 +383,9 @@ export default function RestoDetailClient({
                           {/* --- Add to Cart / Quantity Stepper --- */}
                           {qty === 0 ? (
                             <button
-                              onClick={() => handleAdd(item)}
-                              className='w-full h-9 md:w-19.75 lg:h-10 flex items-center justify-center rounded-full bg-primary-100 font-bold text-white transition-all duration-500 ease-in-out hover-dim active:scale-[0.98]'
+                              onClick={() => changeQty(item, 1)}
+                              disabled={pendingKey === key}
+                              className='w-full h-9 md:w-19.75 lg:h-10 flex items-center justify-center rounded-full bg-primary-100 font-bold text-white transition-all duration-500 ease-in-out hover-dim active:scale-[0.98] disabled:opacity-60'
                               style={{
                                 fontSize: 'clamp(12px, 0.4vw + 10.4px, 16px)',
                               }}
@@ -370,8 +401,9 @@ export default function RestoDetailClient({
                               }}
                             >
                               <button
-                                onClick={() => changeQty(item.id, -1)}
-                                className='flex items-center justify-center rounded-full border border-neutral-300 text-neutral-950 shrink-0 transition-all duration-500 ease-in-out hover-dark'
+                                onClick={() => changeQty(item, -1)}
+                                disabled={pendingKey === key}
+                                className='flex items-center justify-center rounded-full border border-neutral-300 text-neutral-950 shrink-0 transition-all duration-500 ease-in-out hover-dark disabled:opacity-50'
                                 style={{
                                   width: 'clamp(32px, 1.2vw + 27.8px, 40px)',
                                   height: 'clamp(32px, 1.2vw + 27.8px, 40px)',
@@ -393,8 +425,9 @@ export default function RestoDetailClient({
                                 {qty}
                               </span>
                               <button
-                                onClick={() => changeQty(item.id, 1)}
-                                className='flex items-center justify-center rounded-full bg-primary-100 text-white transition-all duration-500 ease-in-out hover-dim shrink-0'
+                                onClick={() => changeQty(item, 1)}
+                                disabled={pendingKey === key}
+                                className='flex items-center justify-center rounded-full bg-primary-100 text-white transition-all duration-500 ease-in-out hover-dim shrink-0 disabled:opacity-50'
                                 style={{
                                   width: 'clamp(32px, 1.2vw + 27.8px, 40px)',
                                   height: 'clamp(32px, 1.2vw + 27.8px, 40px)',

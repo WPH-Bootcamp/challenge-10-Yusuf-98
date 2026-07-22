@@ -10,8 +10,8 @@ import LogoutIcon from '@/assets/icons/arrow-circle-broken-left.png';
 import Search from '@/assets/icons/search.png';
 import StoreIcon from '@/assets/icons/store.png';
 import XClose from '@/assets/icons/x-close.png';
-import { useMyOrders } from '@/lib/query/hooks/order';
-import { useCreateReview } from '@/lib/query/hooks/review';
+import { useMyOrders } from '@/hooks/queries/order';
+import { useCreateReview } from '@/hooks/queries/review';
 import { useRequireAuth } from '@/hooks/use-auth-guard';
 import { useAuthStore } from '@/store/auth.store';
 import { useRouter } from 'next/navigation';
@@ -28,7 +28,7 @@ const STATUS_TABS: { label: string; value: OrderStatus }[] = [
   { label: 'On the Way', value: 'on_the_way' },
   { label: 'Delivered', value: 'delivered' },
   { label: 'Done', value: 'done' },
-  { label: 'Canceled', value: 'canceled' },
+  { label: 'Cancelled', value: 'cancelled' },
 ];
 
 // --- Orders Client ---
