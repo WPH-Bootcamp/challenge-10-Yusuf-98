@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as orderApi from '@/lib/api/order';
 import type { OrderStatus, CheckoutPayload } from '@/types';
-import { queryKeys } from '../keys';
+import { queryKeys } from './keys';
 
 export function useMyOrders(params?: {
   status?: OrderStatus;

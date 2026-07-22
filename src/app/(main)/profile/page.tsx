@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useProfile, useUpdateProfile } from '@/lib/query/hooks/profile';
+import { useProfile, useUpdateProfile } from '@/hooks/queries/profile';
 import { useAuthStore } from '@/store/auth.store';
 import { useRequireAuth } from '@/hooks/use-auth-guard';
 import { useQueryClient } from '@tanstack/react-query';

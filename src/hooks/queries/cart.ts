@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/auth.store';
 import * as cartApi from '@/lib/api/cart';
-import { queryKeys } from '../keys';
+import { queryKeys } from './keys';
 
 export function useCart() {
   const { isAuthenticated } = useAuthStore();

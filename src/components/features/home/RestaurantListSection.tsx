@@ -5,7 +5,7 @@ import {
   useRestaurants,
   useRecommended,
   useRestaurantSearch,
-} from '@/lib/query/hooks/resto';
+} from '@/hooks/queries/resto';
 import { useAuthStore } from '@/store/auth.store';
 import { RestaurantCard } from '@/components/shared/RestaurantCard';
 import { RestaurantCardSkeleton } from '@/components/shared/Skeletons';

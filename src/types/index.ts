@@ -155,7 +155,7 @@ export type OrderStatus =
   | 'on_the_way'
   | 'delivered'
   | 'done'
-  | 'canceled';
+  | 'cancelled';
 
 export interface OrderItem {
   menuId: string | number;
