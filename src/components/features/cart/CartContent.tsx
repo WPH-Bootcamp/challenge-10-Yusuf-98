@@ -9,7 +9,7 @@ import {
   useCart,
   useUpdateCartItem,
   useDeleteCartItem,
-} from '@/lib/query/hooks';
+} from '@/lib/query/hooks/cart';
 import { useRequireAuth } from '@/hooks/use-auth-guard';
 import { formatCurrency } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
