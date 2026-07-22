@@ -42,12 +42,16 @@ export function useBestSellers(params?: { page?: number; limit?: number }) {
   });
 }
 
-export function useRecommended(params?: { page?: number; limit?: number }) {
+export function useRecommended(
+  params?: { page?: number; limit?: number },
+  enabled = true
+) {
   return useQuery({
     queryKey: queryKeys.recommended(params),
     queryFn: () => restoApi.getRecommended(params),
     staleTime: 1000 * 60 * 5,
     retry: 1,
+    enabled,
   });
 }
 

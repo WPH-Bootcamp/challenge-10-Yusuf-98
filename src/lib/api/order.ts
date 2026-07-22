@@ -3,7 +3,8 @@ import type { CheckoutPayload, Order, OrderStatus } from '@/types';
 
 export async function checkout(payload: CheckoutPayload): Promise<Order> {
   const { data } = await apiClient.post('/api/order/checkout', payload);
-  return (data as { data: Order }).data ?? (data as Order);
+  const d = data as { data?: { transaction?: Order } };
+  return d.data?.transaction ?? (data as Order);
 }
 
 export async function getMyOrders(params?: {

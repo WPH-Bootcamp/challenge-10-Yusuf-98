@@ -26,9 +26,10 @@ export function RestaurantListSection() {
   const { data: allRestos, isLoading: loadingAll } = useRestaurants({
     limit: 24,
   });
-  const { data: recommended, isLoading: loadingRec } = useRecommended({
-    limit: 12,
-  });
+  const { data: recommended, isLoading: loadingRec } = useRecommended(
+    { limit: 12 },
+    isAuthenticated
+  );
   const { data: searchResults, isLoading: loadingSearch } =
     useRestaurantSearch(query);
 
