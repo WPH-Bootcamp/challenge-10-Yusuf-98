@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/store/auth.store';
-import { useCart } from '@/lib/query/hooks/cart';
+import { useCart } from '@/hooks/queries/cart';
 import { useQueryClient } from '@tanstack/react-query';
 import Logo from '@/assets/images/logo.png';
 import LogoColor from '@/assets/images/logo-color.png';
